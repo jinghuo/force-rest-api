@@ -198,6 +198,10 @@ public class ForceApi {
 	}
 
 	public String createSObject(String type, Object sObject) {
+		return createSObject(type, sObject, true);
+	}
+
+	public String createSObject(String type, Object sObject, boolean sforceAutoAssign) {
 		try {
 			// We're trying to keep Http classes clean with no reference to JSON/Jackson
 			// Therefore, we serialize to bytes before we pass object to HttpRequest().
@@ -209,6 +213,7 @@ public class ForceApi {
 					.method("POST")
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
+					.header("Sforce-Auto-Assign", Boolean.toString(sforceAutoAssign))
 					.expectsCode(201)
 					.content(jsonMapper.writeValueAsBytes(sObject))).getStream(),CreateResponse.class);
 
@@ -227,6 +232,10 @@ public class ForceApi {
 	}
 
 	public void updateSObject(String type, String id, Object sObject) {
+		updateSObject(type, id, sObject, true);
+	}
+
+	public void updateSObject(String type, String id, Object sObject, boolean sforceAutoAssign) {
 		try {
 			// See createSObject for note on streaming ambition
 			apiRequest(new HttpRequest()
@@ -234,6 +243,7 @@ public class ForceApi {
 				.method("POST")
 				.header("Accept", "application/json")
 				.header("Content-Type", "application/json")
+				.header("Sforce-Auto-Assign", Boolean.toString(sforceAutoAssign))
 				.expectsCode(204)
 				.content(jsonMapper.writeValueAsBytes(sObject))
 			);
